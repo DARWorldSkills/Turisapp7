@@ -23,11 +23,22 @@ public class AdapterT extends RecyclerView.Adapter<AdapterT.Holder>{
     public interface OnItemClickListener{
         void itemClick(int position);
     }
+
+    public AdapterT(List<Lugares> lugaresList, int item, Context context) {
+        this.lugaresList = lugaresList;
+        this.item = item;
+        this.context = context;
+    }
+
+    public void setMlistener(OnItemClickListener mlistener) {
+        this.mlistener = mlistener;
+    }
+
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(item,parent,false);
         Holder holder = new Holder(view,mlistener);
-        return null;
+        return holder;
     }
 
     @Override
@@ -82,7 +93,7 @@ public class AdapterT extends RecyclerView.Adapter<AdapterT.Holder>{
 
             }
 
-            if (item==R.layout.item_list){
+            if (item==R.layout.item_land){
                 txtNombre= itemView.findViewById(R.id.txtNombreItem);
 
                 txtNombre.setText(lugares.getNombre());
