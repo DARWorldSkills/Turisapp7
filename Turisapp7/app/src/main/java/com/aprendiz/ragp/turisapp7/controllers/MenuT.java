@@ -88,6 +88,7 @@ public class MenuT extends AppCompatActivity
         } else if (id == R.id.nav_hoteles) {
             fragment = new FragmentHoteles();
             getSupportFragmentManager().beginTransaction().replace(R.id.contenedor,fragment).commit();
+
         } else if (id == R.id.nav_restaurantes) {
 
             fragment = new FragmentRestaurantes();

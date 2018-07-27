@@ -6,7 +6,7 @@ public class Constans {
 
     public static final int [] imagenesSitios= {
             R.drawable.portal_del_quindio,
-            R.drawable.armenia,
+            R.drawable.unicentro,
             R.drawable.calima,
             R.drawable.parque_cafe,
             R.drawable.panaca,
@@ -19,6 +19,7 @@ public class Constans {
     public static final int [] imagenesHoteles= {
             R.drawable.bolivar_plaza,
             R.drawable.mocawa,
+            R.drawable.armenia,
             R.drawable.zuldemayda,
             R.drawable.decameron,
             R.drawable.heliconias,

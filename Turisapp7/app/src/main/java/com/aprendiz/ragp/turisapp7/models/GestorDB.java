@@ -60,7 +60,7 @@ public class GestorDB extends SQLiteOpenHelper {
     public void inputHoteles(Context context) throws IOException {
         SQLiteDatabase db = getWritableDatabase();
         String linea;
-        InputStream is = context.getResources().openRawResource(R.raw.sitios);
+        InputStream is = context.getResources().openRawResource(R.raw.hoteles);
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         if (is!=null){
             int i=0;
@@ -86,7 +86,7 @@ public class GestorDB extends SQLiteOpenHelper {
     public void inputRestaurantes(Context context) throws IOException {
         SQLiteDatabase db = getWritableDatabase();
         String linea;
-        InputStream is = context.getResources().openRawResource(R.raw.sitios);
+        InputStream is = context.getResources().openRawResource(R.raw.restaurantes);
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         if (is!=null){
             int i=0;
