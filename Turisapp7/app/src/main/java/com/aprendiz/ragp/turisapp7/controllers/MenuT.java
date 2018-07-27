@@ -80,26 +80,22 @@ public class MenuT extends AppCompatActivity
         Fragment fragment;
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_inicio) {
             // Handle the camera action
             fragment = new FragmentInicio();
             getSupportFragmentManager().beginTransaction().replace(R.id.contenedor,fragment).commit();
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_hoteles) {
             fragment = new FragmentHoteles();
             getSupportFragmentManager().beginTransaction().replace(R.id.contenedor,fragment).commit();
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_restaurantes) {
 
             fragment = new FragmentRestaurantes();
             getSupportFragmentManager().beginTransaction().replace(R.id.contenedor,fragment).commit();
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_sitios) {
 
             fragment = new FragmentSitios();
             getSupportFragmentManager().beginTransaction().replace(R.id.contenedor,fragment).commit();
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 
