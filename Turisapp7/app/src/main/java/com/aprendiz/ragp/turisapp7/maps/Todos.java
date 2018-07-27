@@ -1,6 +1,7 @@
 package com.aprendiz.ragp.turisapp7.maps;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -42,8 +43,10 @@ import java.util.List;
 
 public class Todos extends FragmentActivity implements OnMapReadyCallback {
 
+    private GoogleMap mMap;
     LocationManager locationManager;
     Location location;
+
     Marker marker;
 
     double latitud = 0.0;
@@ -53,8 +56,6 @@ public class Todos extends FragmentActivity implements OnMapReadyCallback {
 
     private static final int LOCATION_REQUEST = 500;
     ArrayList<LatLng> listpoint;
-
-    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,32 +67,39 @@ public class Todos extends FragmentActivity implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
         listpoint = new ArrayList<>();
 
+        if (ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_LOCATION);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_LOCATION);
         }
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     }
 
 
+
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-
         mMap.getUiSettings().setZoomControlsEnabled(true);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST);
 
             return;
         }
-
         mMap.setMyLocationEnabled(true);
 
         miUbicacion();
-        //Aqui va la ubicacion predeterminada
-
         Lugares lugares = MenuT.lugar;
         double lat = lugares.getLatitud();
         double lon = lugares.getLongitud();
@@ -105,14 +113,53 @@ public class Todos extends FragmentActivity implements OnMapReadyCallback {
         TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
         taskRequestDirections.execute(url);
 
+        //mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        //  @Override
+        // public void onMapClick(LatLng latLng) {
+        //Resetear Marcador
+
+        //   if (listpoint.size() == 2) {
+        //     listpoint.clear();
+        //   mMap.clear();
+
+        //}
+
+        // save firts point
+
+        //listpoint.add(latLng);
+
+        //crearMarcador
+
+        //MarkerOptions markerOptions = new MarkerOptions();
+        //markerOptions.position(latLng);
+
+        //if (listpoint.size() == 1) {
+        //add first point in the map
+
+        //  markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+        // } else {
+        //add second markert
+
+        //   markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+
+        //}
+        //mMap.addMarker(markerOptions);
+
+        //if (listpoint.size() == 2) {
+        //Create the url
 
 
+        //}
+        //}
+        //});
 
     }
 
-    private void miUbicacion() {
+    private void    miUbicacion() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_LOCATION);
+
         {
             if (ActivityCompat.checkSelfPermission(this,
                     android.Manifest.permission.ACCESS_FINE_LOCATION) !=
@@ -124,14 +171,13 @@ public class Todos extends FragmentActivity implements OnMapReadyCallback {
             }
 
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            actualizarInformacion(location);
-            locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 1500, 0, locationListener);
-
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            actualizarUbicacion(location);
+            locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 15000, 0, locationListener);
         }
     }
 
-    private void actualizarInformacion(Location location) {
+    private void actualizarUbicacion(Location location) {
 
         if (location != null) {
             latitud = location.getLatitude();
@@ -143,17 +189,18 @@ public class Todos extends FragmentActivity implements OnMapReadyCallback {
     private void agregarMarcador(double latitud, double longitud) {
 
         LatLng marca = new LatLng(latitud, longitud);
-        CameraUpdate miUbicacion = CameraUpdateFactory.newLatLngZoom(marca, 10);
+        CameraUpdate miubicacion = CameraUpdateFactory.newLatLngZoom(marca, 14);
         if (marker != null) marker.remove();
         marker = mMap.addMarker(new MarkerOptions().position(marca).title("Estas aquí"));
-        mMap.animateCamera(miUbicacion);
-
+        mMap.animateCamera(miubicacion);
     }
+
 
     LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            actualizarInformacion(location);
+            actualizarUbicacion(location);
+
         }
 
         @Override
@@ -173,15 +220,21 @@ public class Todos extends FragmentActivity implements OnMapReadyCallback {
     };
 
     private String getRequestUrl(LatLng origin, LatLng destino) {
-        String str_org = "origin" + origin.latitude + "," + origin.longitude;
-        String str_destino = "destination" + destino.latitude + "," + destino.longitude;
+        String str_org = "origin=" + origin.latitude + "," +origin.longitude;
+        //Value of destination
+        String str_destino = "destination=" + destino.latitude+","+destino.longitude;
+        //set value
         String sensor = "sensor=false";
+        //Mode for find direction
         String mode = "mode=driving";
-        String param = str_org + "&" + str_destino + "&" + sensor + "&" + mode;
+        //Build the full
+        String param = str_org +"&" + str_destino + "&" +sensor+"&" + mode;
+        //Output format
         String output = "json";
+        //Create url request
         String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + param;
-
         return url;
+
     }
 
     private String requestDirection(String reqUrl) throws IOException {
@@ -192,6 +245,8 @@ public class Todos extends FragmentActivity implements OnMapReadyCallback {
             URL url = new URL(reqUrl);
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.connect();
+
+            // get the respons result
 
             inputStream = httpURLConnection.getInputStream();
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
@@ -214,60 +269,46 @@ public class Todos extends FragmentActivity implements OnMapReadyCallback {
         } finally {
             if (inputStream != null) {
                 inputStream.close();
+
             }
             httpURLConnection.disconnect();
         }
         return responseString;
+
     }
 
-
+    @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
         switch (requestCode) {
             case LOCATION_REQUEST:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return;
-                    }
                     mMap.setMyLocationEnabled(true);
-
                 }
 
                 break;
         }
-
-
     }
 
-    public  class TaskRequestDirections extends AsyncTask<String, Void, String>{
-
+    public class TaskRequestDirections extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... strings) {
             String responseString = "";
             try {
                 responseString = requestDirection(strings[0]);
-
-
-                } catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             return responseString;
-
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+
+            //Parse json
 
             TaskParser taskParser = new TaskParser();
             taskParser.execute(s);
@@ -318,7 +359,7 @@ public class Todos extends FragmentActivity implements OnMapReadyCallback {
 
                 polylineOptions.addAll(points);
                 polylineOptions.width(15);
-                polylineOptions.color(Color.GREEN);
+                polylineOptions.color(Color.BLUE);
                 polylineOptions.geodesic(true);
             }
 
@@ -332,5 +373,4 @@ public class Todos extends FragmentActivity implements OnMapReadyCallback {
             }
         }
     }
-
 }
