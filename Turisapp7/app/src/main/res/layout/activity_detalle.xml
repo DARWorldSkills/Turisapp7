@@ -6,4 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".controllers.Detalle">
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btnTodos"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="20dp"
+        android:src="@android:drawable/ic_dialog_map"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
 </android.support.constraint.ConstraintLayout>
